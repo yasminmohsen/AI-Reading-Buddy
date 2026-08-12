@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "القارئ الذكي - Smart Reader",
+    "slug": "smart-reader-arabic",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icons/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6A3DD6"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartreader.arabicreadingbuddy",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "نحتاج إلى الميكروفون حتى يتمكن الطفل من قراءة الصفحة بصوته."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "backgroundColor": "#6A3DD6"
+      },
+      "package": "com.smartreader.arabicreadingbuddy",
+      "permissions": ["RECORD_AUDIO"]
+    },
+    "web": {
+      "favicon": "./assets/icons/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-av",
+        {
+          "microphonePermission": "نحتاج إلى الميكروفون حتى يتمكن الطفل من قراءة الصفحة بصوته."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {}
+    }
+  }
+}
