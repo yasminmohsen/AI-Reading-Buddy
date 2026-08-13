@@ -74,6 +74,9 @@ export default function BookReaderScreen({ bookId, onGoHome, onFinishBook }) {
             `score: ${(result.score * 100).toFixed(0)}% (need ${MATCH_THRESHOLD * 100}%) | ${passed ? 'PASS' : 'FAIL'}`
         );
         console.log('[match] word-by-word', result.refWords?.map((w, i) => ({ word: w, matched: result.matchedWords[i] })));
+        if (result.tashkeelNotes?.length) {
+          console.log('[match] tashkeel notes (informational only, does not affect pass/fail)', result.tashkeelNotes);
+        }
         setReviewMatch(result);
         recordPageStat(passed, result);
         setModal(passed ? 'success' : 'error');
@@ -172,7 +175,12 @@ export default function BookReaderScreen({ bookId, onGoHome, onFinishBook }) {
       </View>
 
       <StartModal visible={modal === 'start'} onStart={() => setModal(null)} />
-      <SuccessModal visible={modal === 'success'} isLastPage={isLastPage} onNext={handleNextPage} />
+      <SuccessModal
+        visible={modal === 'success'}
+        isLastPage={isLastPage}
+        onNext={handleNextPage}
+        tashkeelWords={reviewMatch?.tashkeelNotes?.map((n) => n.word) ?? []}
+      />
       <ErrorModal
         visible={modal === 'error'}
         wrongWords={errorText ? [] : reviewMatch?.wrongWords ?? []}

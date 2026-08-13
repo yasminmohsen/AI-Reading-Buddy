@@ -32,7 +32,7 @@ export function StartModal({ visible, onStart }) {
   );
 }
 
-export function SuccessModal({ visible, isLastPage, onNext }) {
+export function SuccessModal({ visible, isLastPage, onNext, tashkeelWords = [] }) {
   return (
     <BottomSheetModal visible={visible}>
       <View style={[styles.iconCircleLg, { backgroundColor: colors.successBg }]}>
@@ -40,6 +40,16 @@ export function SuccessModal({ visible, isLastPage, onNext }) {
       </View>
       <Text style={[styles.title, { color: colors.successDark }]}>أحسنت يا بطل!</Text>
       <Text style={styles.bodyText}>قرأت الصفحة بشكل رائع وبدون أخطاء.{'\n'}هيا ننتقل إلى الصفحة التالية!</Text>
+      {tashkeelWords.length > 0 && (
+        <View style={styles.tashkeelTip}>
+          <Text style={styles.tashkeelTipText}>
+            نصيحة صغيرة: انتبه لحركات كلمة{tashkeelWords.length > 1 ? ':' : ''}{' '}
+            {tashkeelWords.map((w, i) => (
+              <Text key={i} style={styles.tashkeelTipWord}>{w}{i < tashkeelWords.length - 1 ? '، ' : ''}</Text>
+            ))}
+          </Text>
+        </View>
+      )}
       <View style={{ flexDirection: 'row', gap: 5 }}>
         {[0, 1, 2].map((i) => (
           <Text key={i} style={styles.smallStar}>★</Text>
@@ -117,6 +127,9 @@ const styles = StyleSheet.create({
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, justifyContent: 'center' },
   wrongChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 999, backgroundColor: colors.errorBg },
   wrongChipText: { fontFamily: fonts.display, fontSize: 13, fontWeight: '700', color: colors.error },
+  tashkeelTip: { backgroundColor: colors.chipBgSoft, borderRadius: radii.md, paddingVertical: 9, paddingHorizontal: 12, width: '100%' },
+  tashkeelTipText: { fontFamily: fonts.body, fontSize: 12, lineHeight: 19, color: colors.textMuted70, textAlign: 'center' },
+  tashkeelTipWord: { fontFamily: fonts.display, fontWeight: '700', color: colors.primary },
 });
 
 export { arNum };
