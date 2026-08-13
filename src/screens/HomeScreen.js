@@ -10,6 +10,13 @@ const GRID_GAP = 14;
 const BODY_PADDING = 20;
 const MAX_CONTENT_WIDTH = 960;
 const CARD_PADDING = 10; // must match styles.card.padding below
+// One fixed cover ratio for every card, regardless of each book's own source
+// image proportions (altifla's is ~1:1, the others ~0.86) — using cover.
+// imageAspectRatio per book made cells slightly different heights, which
+// misaligned the title row across the grid. resizeMode="cover" crops each
+// book's cover to this shape without distorting it.
+const COVER_ASPECT_RATIO = 0.86;
+const TITLE_LINE_HEIGHT = 19;
 
 // Responsive column count: phones get 2, tablets/small web get 3, desktop web gets 4+.
 function useColumns(width) {
@@ -60,7 +67,7 @@ export default function HomeScreen({ weeklyStars = 3, onOpenBook }) {
             // falls back to the asset's raw intrinsic pixel height instead.
             // Computing both dimensions explicitly sidesteps that entirely.
             const coverWidth = cardWidth - CARD_PADDING * 2;
-            const coverHeight = coverWidth / (b.imageAspectRatio ?? 1);
+            const coverHeight = coverWidth / COVER_ASPECT_RATIO;
             return (
               <Pressable
                 key={b.id}
@@ -78,7 +85,9 @@ export default function HomeScreen({ weeklyStars = 3, onOpenBook }) {
                   resizeMode="cover"
                 />
                 <View style={{ paddingHorizontal: 4, paddingBottom: 4, gap: 3 }}>
-                  <Text style={styles.cardTitle} numberOfLines={2}>{b.title}</Text>
+                  <Text style={styles.cardTitle} numberOfLines={2}>
+                  {b.title}
+                </Text>
                   <Text style={styles.cardMeta}>{arNum(b.pages.length)} صفحات · {b.ageLabel}</Text>
                 </View>
               </Pressable>
@@ -125,6 +134,14 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: GRID_GAP },
   card: { backgroundColor: colors.white, borderRadius: radii.xl, padding: 10, gap: 9 },
   cover: { width: '100%', borderRadius: radii.md, backgroundColor: colors.chipBg },
-  cardTitle: { fontFamily: fonts.display, fontSize: 14.5, fontWeight: '700', color: colors.textDark, textAlign: 'right' },
+  cardTitle: {
+    fontFamily: fonts.display,
+    fontSize: 14.5,
+    lineHeight: TITLE_LINE_HEIGHT,
+    minHeight: TITLE_LINE_HEIGHT * 2, // reserve 2 lines so 1-line titles don't shrink the card
+    fontWeight: '700',
+    color: colors.textDark,
+    textAlign: 'right',
+  },
   cardMeta: { fontFamily: fonts.body, fontSize: 11, color: colors.textMuted50, textAlign: 'right' },
 });

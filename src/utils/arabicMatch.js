@@ -100,6 +100,20 @@ function wordSimilarity(a, b) {
   return 1 - levenshtein(a, b) / maxLen;
 }
 
+// Isolated-letter phonics pages (e.g. a page whose whole text is just "بَ")
+// normalize down to a single base letter. Deepgram's Arabic model isn't
+// built to transcribe a bare consonant+short-vowel sound in isolation — it
+// spells out the closest real orthography instead, e.g. hearing "ba" comes
+// back as "با" (ب + ا), not "ب". Levenshtein similarity is far too harsh on
+// 1-character strings (one inserted letter is already a 50%+ penalty), so a
+// correctly-pronounced letter would fail every time. For this case, "close
+// enough" means: does the heard word start with (or simply equal) the
+// target letter — the alef/waw/ya elongation that follows is expected ASR
+// behavior for a sustained isolated sound, not a mispronunciation.
+function isIsolatedLetterMatch(refWord, heardWord) {
+  return refWord.length === 1 && heardWord.length > 0 && heardWord[0] === refWord;
+}
+
 /**
  * Compares a spoken transcript against the reference page text.
  * Returns { score (0-1), matchedWords: bool[], wrongWords: string[] } aligned
@@ -132,7 +146,10 @@ export function matchTranscript(referenceText, transcript, { wordThreshold = 0.7
     let bestScore = 0;
     heardWords.forEach((heardWord, hIdx) => {
       if (!heardAvailable[hIdx]) return;
-      const sim = refWord === heardWord ? 1 : wordSimilarity(refWord, heardWord);
+      const sim =
+        refWord === heardWord || isIsolatedLetterMatch(refWord, heardWord)
+          ? 1
+          : wordSimilarity(refWord, heardWord);
       if (sim > bestScore) {
         bestScore = sim;
         bestIdx = hIdx;
