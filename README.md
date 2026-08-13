@@ -26,10 +26,3 @@ Press `w` for web, or scan the QR code with Expo Go for a device.
 - `src/utils/arabicMatch.js` — tashkeel-insensitive fuzzy word matching.
 - `assets/books/<slug>/{images,audio}` — extracted page images and
   narrator audio per book.
-
-## Note on the API key
-
-This repo's initial commit had the Deepgram API key pasted in plaintext in
-this README. It's been moved to `.env` (git-ignored). If this repo is ever
-pushed to a shared/public remote, rotate that key first since it's still in
-the git history of the initial commit.
