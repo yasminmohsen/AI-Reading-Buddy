@@ -100,6 +100,25 @@ function wordSimilarity(a, b) {
   return 1 - levenshtein(a, b) / maxLen;
 }
 
+// A percentage-similarity threshold is unsafe for Arabic: the language's
+// root-and-pattern morphology means a single inserted/changed letter very
+// often produces a completely different word rather than a typo — e.g.
+// "بَيْتٌ" (house) -> "بيت" normalized vs "بيوت" (houses, PLURAL) is only
+// 1 edit apart (75% similarity, well above a 72% threshold), and
+// "الغضب" (anger) vs "الغاضب" (the angry one, via the common فعل->فاعل
+// participle pattern) is also 1 edit apart. Both were confirmed as live
+// false-positives — a wrong word was marked correct. So: require an EXACT
+// match for short/medium words, and only tolerate a single-character edit
+// once the word is long enough (>=7 letters) that one edit is a small
+// fraction of it and far more likely to be ASR noise than a real
+// morphological change.
+function isCloseEnoughWord(a, b) {
+  if (a === b) return true;
+  const minLen = Math.min(a.length, b.length);
+  if (minLen < 7) return false;
+  return levenshtein(a, b) === 1;
+}
+
 // Isolated-letter phonics pages (e.g. a page whose whole text is just "بَ")
 // normalize down to a single base letter. Deepgram's Arabic model isn't
 // built to transcribe a bare consonant+short-vowel sound in isolation — it
@@ -126,7 +145,7 @@ function isIsolatedLetterMatch(refWord, heardWord) {
  * Deepgram surfaces tashkeel too inconsistently to grade on (see
  * arabicMatch usage notes / product decision).
  */
-export function matchTranscript(referenceText, transcript, { wordThreshold = 0.72 } = {}) {
+export function matchTranscript(referenceText, transcript) {
   const refWords = normalizeWords(referenceText);
   const heardWords = normalizeWords(transcript);
   const refWordsRaw = rawWords(referenceText);
@@ -144,18 +163,18 @@ export function matchTranscript(referenceText, transcript, { wordThreshold = 0.7
   refWords.forEach((refWord, idx) => {
     let bestIdx = -1;
     let bestScore = 0;
+    let bestIsMatch = false;
     heardWords.forEach((heardWord, hIdx) => {
       if (!heardAvailable[hIdx]) return;
-      const sim =
-        refWord === heardWord || isIsolatedLetterMatch(refWord, heardWord)
-          ? 1
-          : wordSimilarity(refWord, heardWord);
+      const exactOrPhonics = refWord === heardWord || isIsolatedLetterMatch(refWord, heardWord);
+      const sim = exactOrPhonics ? 1 : wordSimilarity(refWord, heardWord);
       if (sim > bestScore) {
         bestScore = sim;
         bestIdx = hIdx;
+        bestIsMatch = exactOrPhonics || isCloseEnoughWord(refWord, heardWord);
       }
     });
-    const isMatch = bestScore >= wordThreshold;
+    const isMatch = bestIsMatch;
     if (isMatch && bestIdx !== -1) {
       heardAvailable[bestIdx] = false;
       const mismatches = compareWordTashkeel(refWordsRaw[idx], heardWordsRaw[bestIdx]);

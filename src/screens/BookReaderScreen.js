@@ -67,7 +67,7 @@ export default function BookReaderScreen({ bookId, onGoHome, onFinishBook }) {
       setStatus('transcribing');
       try {
         const transcript = await transcribeAudio(uri);
-        const result = matchTranscript(page.text, transcript, { wordThreshold: 0.72 });
+        const result = matchTranscript(page.text, transcript);
         const passed = isPassingScore(result.score, { min: MATCH_THRESHOLD });
         console.log(
           `[match] page ${page.pageNumber} | reference: "${page.text}" | heard: "${transcript}" | ` +
