@@ -1,7 +1,12 @@
+import { useEffect, useState } from 'react';
 import { View, Text, Image, Pressable, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, fonts, radii, shadow } from '../theme/theme';
 import { BOOKS } from '../data/booksData';
 import StarRow from '../components/StarRow';
+import SirajIntroModal from '../components/SirajIntroModal';
+
+const SIRAJ_INTRO_SEEN_KEY = 'siraj_intro_seen_v1';
 
 const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
 const arNum = (n) => String(n).replace(/[0-9]/g, (d) => AR_DIGITS[+d]);
@@ -32,8 +37,22 @@ export default function HomeScreen({ weeklyStars = 3, onOpenBook }) {
   const columns = useColumns(contentWidth);
   const cardWidth = (contentWidth - BODY_PADDING * 2 - GRID_GAP * (columns - 1)) / columns;
 
+  const [showSirajIntro, setShowSirajIntro] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem(SIRAJ_INTRO_SEEN_KEY).then((seen) => {
+      if (!seen) setShowSirajIntro(true);
+    });
+  }, []);
+
+  const dismissSirajIntro = () => {
+    setShowSirajIntro(false);
+    AsyncStorage.setItem(SIRAJ_INTRO_SEEN_KEY, '1');
+  };
+
   return (
     <ScrollView style={styles.root} contentContainerStyle={{ paddingBottom: 40, alignItems: 'center' }}>
+      <SirajIntroModal visible={showSirajIntro} onDismiss={dismissSirajIntro} />
       <View style={[styles.header, { maxWidth: MAX_CONTENT_WIDTH, width: '100%' }]}>
         <View style={styles.headerTop}>
           <View style={{ gap: 4 }}>

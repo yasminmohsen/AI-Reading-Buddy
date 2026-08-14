@@ -28,6 +28,28 @@ export const colors = {
   cardShadow: 'rgba(60,36,112,0.13)',
 };
 
+// Palette for the "لبيبو" (Siraj) companion character — mirrored from the
+// "Reader Buddy" companion prototype (claude.ai/design).
+colors.siraj = {
+  glowInner: 'rgba(90,215,255,0.55)',
+  glowOuter: 'rgba(120,110,250,0.28)',
+  glowEdge: 'rgba(120,110,250,0)',
+  bodyGradient: ['#8DE9FF', '#63B6F7', '#8F74F2', '#A86CF0'],
+  bodyGradientLocations: [0, 0.32, 0.68, 1],
+  bodyBorder: 'rgba(255,255,255,0.55)',
+  continent: 'rgba(126,247,211,0.75)',
+  highlight: 'rgba(255,255,255,0.6)',
+  eye: '#1B0F3D',
+  mouth: '#20103F',
+  tongue: '#FF8095',
+  blush: 'rgba(110,200,255,0.75)',
+  ring: 'rgba(126,247,211,0.7)',
+  sparkleGold: '#FFE17A',
+  sparkleTeal: '#7EF7D3',
+  sparklePink: '#FFB6E6',
+  zzz: '#BFE9FF',
+};
+
 export const fonts = {
   display: 'BalooBhaijaan2', // headings / numerals / titles
   body: 'Cairo', // body copy

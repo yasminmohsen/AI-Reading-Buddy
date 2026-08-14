@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, Text, Animated, Easing, StyleSheet } from 'react-native';
 import { colors, fonts } from '../theme/theme';
+import Siraj from '../components/Siraj';
 
 export default function SplashScreen({ onDone, durationMs = 2200 }) {
   const float = useRef(new Animated.Value(0)).current;
@@ -20,8 +21,8 @@ export default function SplashScreen({ onDone, durationMs = 2200 }) {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.logoBox, { transform: [{ translateY }] }]}>
-        <Text style={styles.logoLetter}>ق</Text>
+      <Animated.View style={{ transform: [{ translateY }] }}>
+        <Siraj mood="idle" size={132} />
       </Animated.View>
       <View style={styles.textWrap}>
         <Text style={styles.title}>القارئ الذكي</Text>
@@ -38,20 +39,6 @@ export default function SplashScreen({ onDone, durationMs = 2200 }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', gap: 22 },
-  logoBox: {
-    width: 118,
-    height: 118,
-    borderRadius: 34,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#200A50',
-    shadowOpacity: 0.32,
-    shadowRadius: 40,
-    shadowOffset: { width: 0, height: 18 },
-    elevation: 8,
-  },
-  logoLetter: { fontFamily: fonts.display, fontSize: 62, fontWeight: '800', color: colors.primary },
   textWrap: { alignItems: 'center', gap: 7 },
   title: { fontFamily: fonts.display, fontSize: 36, fontWeight: '800', color: colors.white },
   subtitle: { fontFamily: fonts.body, fontSize: 15, fontWeight: '500', color: 'rgba(255,255,255,0.78)' },

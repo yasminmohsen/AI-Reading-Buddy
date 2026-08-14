@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Image, Pressable, Animated, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Image, Pressable, Animated, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, fonts, radii, shadow } from '../theme/theme';
 import { getBook } from '../data/booksData';
 import MicButton from '../components/MicButton';
+import Siraj from '../components/Siraj';
 import { StartModal, SuccessModal, ErrorModal, TurnModal } from '../components/ReaderModals';
 import { useRecorder } from '../utils/useRecorder';
 import { transcribeAudio } from '../services/deepgram';
@@ -124,7 +125,7 @@ export default function BookReaderScreen({ bookId, onGoHome, onFinishBook }) {
     status === 'transcribing'
       ? 'لحظات… أستمع لما قرأته'
       : status === 'narrating'
-      ? 'الراوي يقرأ الآن — استمع جيدًا'
+      ? 'لبيبو يقرأ الآن — استمع للنطق الصحيح'
       : recording
       ? 'أستمع إليك… اقرأ بصوت واضح'
       : 'اضغط على الميكروفون وابدأ القراءة';
@@ -164,7 +165,7 @@ export default function BookReaderScreen({ bookId, onGoHome, onFinishBook }) {
         <Text style={styles.hint}>{hint}</Text>
         {status === 'transcribing' || status === 'narrating' ? (
           <View style={styles.micPlaceholder}>
-            <ActivityIndicator color={colors.primary} size="small" />
+            <Siraj mood={status === 'narrating' ? 'speaking' : 'thinking'} size={84} />
           </View>
         ) : (
           <MicButton recording={recording} onPress={handleMicPress} disabled={!!modal} />
